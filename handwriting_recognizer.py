@@ -28,11 +28,11 @@ def load_mnist(mnist_path='MNIST_data/'):
 def initialize_parameters(num_px, num_class):
     """
     Initialize parameters to build NN.
-        w1: (32, num_px)
-        b1: (32, 1)
-        w2: (16, 32)
-        b2: (16, 1)
-        w3: (num_class, 16)
+        w1: (num_l1, num_px)
+        b1: (num_l1, 1)
+        w2: (num_l2, num_l1)
+        b2: (num_l2, 1)
+        w3: (num_class, num_l2)
         b2: (num_class, 1)
 
     :param num_px: Number of pixels of a image, 784
@@ -40,11 +40,14 @@ def initialize_parameters(num_px, num_class):
     :return:
     parameters -- A python dictionary of tensors
     """
-    w1 = tf.get_variable('W1', [32, num_px], initializer=tf.contrib.layers.xavier_initializer())
-    b1 = tf.get_variable('b1', [32, 1], initializer=tf.zeros_initializer())
-    w2 = tf.get_variable('W2', [16, 32], initializer=tf.contrib.layers.xavier_initializer())
-    b2 = tf.get_variable('b2', [16, 1], initializer=tf.zeros_initializer())
-    w3 = tf.get_variable('W3', [num_class, 16], initializer=tf.contrib.layers.xavier_initializer())
+    num_l1 = 256
+    num_l2 = 256
+
+    w1 = tf.get_variable('W1', [num_l1, num_px], initializer=tf.contrib.layers.xavier_initializer())
+    b1 = tf.get_variable('b1', [num_l1, 1], initializer=tf.zeros_initializer())
+    w2 = tf.get_variable('W2', [num_l2, num_l1], initializer=tf.contrib.layers.xavier_initializer())
+    b2 = tf.get_variable('b2', [num_l2, 1], initializer=tf.zeros_initializer())
+    w3 = tf.get_variable('W3', [num_class, num_l2], initializer=tf.contrib.layers.xavier_initializer())
     b3 = tf.get_variable('b3', [num_class, 1], initializer=tf.zeros_initializer())
 
     parameters = {'W1': w1,
