@@ -55,9 +55,13 @@ def initialize_parameters(num_px, num_class):
     return parameters
 
 
-def main():
-    mnist = load_mnist()
+def model(mnist):
+    """
+    Implement of 3-layer tensorflow model.
 
+    :param mnist: Tensorflow handwriting data
+    :return:
+    """
     # Get transpose of data, because I want one column to represent one datum
     train_x = mnist.train.images.T
     train_y = mnist.train.labels.T
@@ -75,6 +79,11 @@ def main():
     parameters = initialize_parameters(num_px, num_class)
 
     print(str(parameters))
+
+
+def main():
+    mnist = load_mnist()
+    model(mnist)
 
 
 main()
