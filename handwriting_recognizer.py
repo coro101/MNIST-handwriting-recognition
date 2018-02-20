@@ -2,6 +2,8 @@
 
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def load_mnist(mnist_path='MNIST_data/'):
@@ -107,12 +109,17 @@ def compute_cost(z3, y, parameters):
     return cost
 
 
-def model(mnist):
+def model(mnist, learning_rate=0.0002, num_epochs=100, mini_batch_size=128, print_cost=True):
     """
     Implement of 3-layer tensorflow model.
 
     :param mnist: Tensorflow handwriting data
+    :param learning_rate: Learning rate of gradient descent
+    :param num_epochs: Number of iteration epoch loop
+    :param mini_batch_size: Size of mini batch
+    :param print_cost: If true, print the cost
     :return:
+    parameters -- Parameters learnt by this model
     """
     # Get transpose of data, because I want one column to represent one datum
     train_x = mnist.train.images.T
@@ -136,7 +143,50 @@ def model(mnist):
     # Cost function
     cost = compute_cost(z3, y, parameters)
 
-    print(cost)
+    # Back propagation
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # Initialize tensorflow variables
+    init = tf.global_variables_initializer()
+
+    costs = []
+    with tf.Session() as session:
+        session.run(init)
+
+        for epoch in range(num_epochs):
+            epoch_cost = 0.
+            num_mini_batches = mnist.train.num_examples // mini_batch_size
+
+            for _ in range(num_mini_batches):
+                mini_batch_x, mini_batch_y = mnist.train.next_batch(mini_batch_size)
+                _, mini_batch_cost = session.run([optimizer, cost], feed_dict={x: mini_batch_x.T,
+                                                                               y: mini_batch_y.T})
+                epoch_cost += mini_batch_cost / num_mini_batches
+
+            if print_cost and epoch % 10 == 0:
+                print("Cost after epoch %i: %f" % (epoch, epoch_cost))
+            if print_cost and epoch % 5 == 0:
+                costs.append(epoch_cost)
+
+        # Plot the cost
+        plt.plot(np.squeeze(costs))
+        plt.ylabel('cost')
+        plt.xlabel('iterations')
+        plt.title("Learning rate =" + str(learning_rate))
+        plt.show()
+
+        parameters = session.run(parameters)
+
+        # Calculate the correct predictions
+        correct_prediction = tf.equal(tf.argmax(z3), tf.argmax(y))
+
+        # Calculate accuracy on the test set
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+
+        print("Train Accuracy:", accuracy.eval({x: train_x, y: train_y}))
+        print("Test Accuracy:", accuracy.eval({x: test_x, y: test_y}))
+
+        return parameters
 
 
 def main():
