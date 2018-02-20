@@ -108,7 +108,7 @@ def compute_cost(z3, y, parameters):
     logits = tf.transpose(z3)
     labels = tf.transpose(y)
 
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels) +
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels) +
                           lambd * regularize)
     return cost
 
