@@ -55,6 +55,32 @@ def initialize_parameters(num_px, num_class):
     return parameters
 
 
+def forward_propagation(x, parameters):
+    """
+    Implement of forward propagation of the following model.
+        LINEAR -> RELU -> LINEAR -> RELU -> LINEAR -> SOFT MAX
+
+    :param x: Placeholder of input data set
+    :param parameters: Python dictionary containing W, b
+    :return:
+    z3 -- The output value before soft max activation function
+    """
+    w1 = parameters['W1']
+    b1 = parameters['b1']
+    w2 = parameters['W2']
+    b2 = parameters['b2']
+    w3 = parameters['W3']
+    b3 = parameters['b3']
+
+    z1 = tf.add(tf.matmul(w1, x), b1)
+    a1 = tf.nn.relu(z1)
+    z2 = tf.add(tf.matmul(w2, a1), b2)
+    a2 = tf.nn.relu(z2)
+    z3 = tf.add(tf.matmul(w3, a2), b3)
+
+    return z3
+
+
 def model(mnist):
     """
     Implement of 3-layer tensorflow model.
@@ -78,7 +104,10 @@ def model(mnist):
     # Initialize parameters
     parameters = initialize_parameters(num_px, num_class)
 
-    print(str(parameters))
+    # Forward propagation
+    z3 = forward_propagation(x, parameters)
+
+    print(z3)
 
 
 def main():
