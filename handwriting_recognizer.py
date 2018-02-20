@@ -57,13 +57,14 @@ def initialize_parameters(num_px, num_class):
     return parameters
 
 
-def forward_propagation(x, parameters):
+def forward_propagation(x, parameters, keep_prob):
     """
     Implement of forward propagation of the following model.
         LINEAR -> RELU -> LINEAR -> RELU -> LINEAR -> SOFT MAX
 
     :param x: Placeholder of input data set
     :param parameters: Python dictionary containing W, b
+    :param keep_prob: Probability of keeping a neuron active during drop-out
     :return:
     z3 -- The output value before soft max activation function
     """
@@ -75,9 +76,9 @@ def forward_propagation(x, parameters):
     b3 = parameters['b3']
 
     z1 = tf.add(tf.matmul(w1, x), b1)
-    a1 = tf.nn.relu(z1)
+    a1 = tf.nn.dropout(tf.nn.relu(z1), keep_prob)
     z2 = tf.add(tf.matmul(w2, a1), b2)
-    a2 = tf.nn.relu(z2)
+    a2 = tf.nn.dropout(tf.nn.relu(z2), keep_prob)
     z3 = tf.add(tf.matmul(w3, a2), b3)
 
     return z3
@@ -133,12 +134,13 @@ def model(mnist, learning_rate=0.0002, num_epochs=100, mini_batch_size=128, prin
     # Create placeholders
     x = tf.placeholder(tf.float32, [num_px, None])
     y = tf.placeholder(tf.float32, [num_class, None])
+    keep_prob = tf.placeholder(tf.float32)
 
     # Initialize parameters
     parameters = initialize_parameters(num_px, num_class)
 
     # Forward propagation
-    z3 = forward_propagation(x, parameters)
+    z3 = forward_propagation(x, parameters, keep_prob)
 
     # Cost function
     cost = compute_cost(z3, y, parameters)
@@ -160,7 +162,8 @@ def model(mnist, learning_rate=0.0002, num_epochs=100, mini_batch_size=128, prin
             for _ in range(num_mini_batches):
                 mini_batch_x, mini_batch_y = mnist.train.next_batch(mini_batch_size)
                 _, mini_batch_cost = session.run([optimizer, cost], feed_dict={x: mini_batch_x.T,
-                                                                               y: mini_batch_y.T})
+                                                                               y: mini_batch_y.T,
+                                                                               keep_prob: 0.8})
                 epoch_cost += mini_batch_cost / num_mini_batches
 
             if print_cost and epoch % 10 == 0:
@@ -183,8 +186,8 @@ def model(mnist, learning_rate=0.0002, num_epochs=100, mini_batch_size=128, prin
         # Calculate accuracy on the test set
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
-        print("Train Accuracy:", accuracy.eval({x: train_x, y: train_y}))
-        print("Test Accuracy:", accuracy.eval({x: test_x, y: test_y}))
+        print("Train Accuracy:", accuracy.eval({x: train_x, y: train_y, keep_prob: 1}))
+        print("Test Accuracy:", accuracy.eval({x: test_x, y: test_y, keep_prob: 1}))
 
         return parameters
 
