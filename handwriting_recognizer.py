@@ -81,6 +81,32 @@ def forward_propagation(x, parameters):
     return z3
 
 
+def compute_cost(z3, y, parameters):
+    """
+    Compute the cost.
+
+    :param z3: Output of forward propagation
+    :param y: Labels
+    :param parameters: Python dictionary containing W, b
+    :return:
+    cost -- A Tensor of the cross entropy cost function
+    """
+    # Calc L2 loss
+    lambd = 0.
+    w1 = parameters['W1']
+    w2 = parameters['W2']
+    w3 = parameters['W3']
+
+    regularize = tf.nn.l2_loss(w1) + tf.nn.l2_loss(w2) + tf.nn.l2_loss(w3)
+
+    logits = tf.transpose(z3)
+    labels = tf.transpose(y)
+
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels) +
+                          lambd * regularize)
+    return cost
+
+
 def model(mnist):
     """
     Implement of 3-layer tensorflow model.
@@ -107,7 +133,10 @@ def model(mnist):
     # Forward propagation
     z3 = forward_propagation(x, parameters)
 
-    print(z3)
+    # Cost function
+    cost = compute_cost(z3, y, parameters)
+
+    print(cost)
 
 
 def main():
