@@ -1,0 +1,5 @@
+# IntelliJ IDE files
+.idea/
+
+# MNIST data
+MNIST_data/
