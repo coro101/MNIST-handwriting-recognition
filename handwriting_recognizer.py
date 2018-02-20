@@ -40,8 +40,8 @@ def initialize_parameters(num_px, num_class):
     :return:
     parameters -- A python dictionary of tensors
     """
-    num_l1 = 256
-    num_l2 = 256
+    num_l1 = 512
+    num_l2 = 512
 
     w1 = tf.get_variable('W1', [num_l1, num_px], initializer=tf.contrib.layers.xavier_initializer())
     b1 = tf.get_variable('b1', [num_l1, 1], initializer=tf.zeros_initializer())
