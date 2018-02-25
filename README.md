@@ -36,7 +36,9 @@ Cost after epoch 80: 0.001794
 Cost after epoch 90: 0.002296
 ```
 
-When the gradient descent with the Adam Optimizer is finished, the cost is displayed as a graph with train and test accuracy.
+Cost is displayed as a graph with train and test accuracy after gradient descent with the Adam Optimizer is finished.  
+  
+![Costs](https://user-images.githubusercontent.com/5036062/36638879-1fea6288-1a43-11e8-9d13-e66ccc820dc2.png)
 ```
 Train Accuracy: 0.999982
 Test Accuracy: 0.9842
